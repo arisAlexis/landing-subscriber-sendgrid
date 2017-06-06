@@ -16,13 +16,12 @@ The default.json file should have these:
 ```
 {
   "port": "my_port_number",
-  "sendgridKey": "your_secret_sendgrid_api_key",
-  "list": "your_sendgrid_list_number"
+  "sendgridKey": "your_secret_sendgrid_api_key"
 }
 
 ```
 
-You can find your list number by uncommenting the lines in app.js and running that function by hitting the endpoint.
+You can find your list number by going to the sendgrid iface and seing the viewList link
 
 Then you need to install the letsencrypt certs (tutorials available online) and make a folder named **keys** under 
 the root and paste there `privkey.pem`, `cert.pem` and `chain.pem`.  
@@ -30,5 +29,5 @@ the root and paste there `privkey.pem`, `cert.pem` and `chain.pem`.
 Then you can use your favorite daemon such as PM2 and run `pm2 start js/server.js`.  
 
 From your webpage you need to hit the endpoint eg. with jQuery:  
-` $.get('https://your_host:8080/fn/subscribe?email='+$('#emailField').val());`
+` $.get('https://your_host:8080/fn/subscribe?list=your_list_number&email='+$('#emailField').val());`
 

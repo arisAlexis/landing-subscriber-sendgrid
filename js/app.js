@@ -11,13 +11,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-function addSubscriber(email) {
+function addSubscriber(email,list) {
   let request = sendgrid.emptyRequest();
   request.method = 'GET';
-  // request.path = '/v3/contactdb/lists';
-  // sendgrid.API(request, function (error, response) {
-  //    console.log(response.body);
-  //  });
   request.body = [{ "email": email }];
   request.method = 'POST';
   request.path = '/v3/contactdb/recipients';
@@ -30,7 +26,7 @@ function addSubscriber(email) {
     const recipient_id = response.body.persisted_recipients[0];
     request = sendgrid.emptyRequest();
     request.method = 'POST';
-    request.path = `/v3/contactdb/lists/${config.get('list')}/recipients/${recipient_id}`;
+    request.path = `/v3/contactdb/lists/${list}/recipients/${recipient_id}`;
     sendgrid.API(request, function (error) {
       if (error) {
         console.log(error);        
@@ -40,15 +36,16 @@ function addSubscriber(email) {
 }
 
 app.get('/fn/subscribe', function(req, res) {
-  
   if (!req.query.email) {
     res.status(400).send({error:'email missing'});
   }
+  else if (!req.query.list) {
+    res.status(400).send({error:'list missing'});
+  }
   else {
-    addSubscriber(req.query.email);
+    addSubscriber(req.query.email,req.query.list);
     res.sendStatus(200);
   }
-
 });
 
 app.use(function(err, req, res, next) {
